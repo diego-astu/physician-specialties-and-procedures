@@ -1,3 +1,0 @@
-This Project takes in Medicare reporting data, for each physician, for each procedure, how many times they performed the procedure. It will explode out that dataset to simulate event-level data (e.g. each procedure performed).
-
-I will process the data to aggregate, for any given time/place/procedure, how many times it was performed. Because each event also has metadata about the doctor (hospital affiliations, specializations), I will be able to look at which specializations are more/less likely to go together, which hospitals are more likely to share doctors, and which doctors may be traveling very far to fulfill their multiple specializations.
