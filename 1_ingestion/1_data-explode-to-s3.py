@@ -67,4 +67,3 @@ exploded_df = merged_df.reindex(merged_df.index.repeat(merged_df.line_srvc_cnt))
 
 s3_url = 's3://diego-bucket0/try0/test0/remote_exploded1_notsubsetted.parquet'
 exploded_df.to_parquet(s3_url, compression='gzip')
-
