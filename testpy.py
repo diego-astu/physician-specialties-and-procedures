@@ -16,6 +16,7 @@ from sodapy import Socrata
 import boto3
 from botocore.exceptions import NoCredentialsError
 from fastparquet import write
+from tabulate import *
 
 
 
@@ -56,12 +57,14 @@ phys_results = medicare_client.get("mj5m-pzi6", limit = 2*1000)
 phys = pd.DataFrame.from_records(phys_results)
 util = pd.DataFrame.from_records(util_results)
 merged_df = pd.merge(phys,util,on="npi")
+
 #list_of_counts = [i * 1 for i in  list(merged_df['line_srvc_cnt'].tolist())]
 
 #exploded_df = pd.DataFrame(np.repeat(merged_df.values,list_of_counts,axis=0))
 
 #exploded_df = pd.DataFrame(merged_df.values.repeat(merged_df.line_srvc_cnt, axis=0), columns=merged_df.columns)
 exploded_df = merged_df.reindex(merged_df.index.repeat(merged_df.line_srvc_cnt))
-s3_url = 's3://diego-bucket0/try0/test0/remote_exploded1_notsubsetted.parquet'
-exploded_df.to_parquet(s3_url, compression='gzip')
-print("Finished")
+
+
+
+print(tabulate(exploded_df.head(),headers='keys'))
