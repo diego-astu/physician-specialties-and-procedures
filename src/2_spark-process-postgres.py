@@ -14,14 +14,20 @@ from pyspark.sql.functions import broadcast
 
 import pandas
 
+# add a description here about what this is doing
+sc = SparkContext(conf=SparkConf())
+spark = SparkSession.builder.getOrCreate()
 
-sc = SparkContext(conf=SparkConf().setAppName("dphys"))
-spark = SparkSession.builder.appName("dphys").getOrCreate()
-#SparkConf().set("spark.jars.packages","org.apache.hadoop:hadoop-aws:3.0.0-alpha3")
-#spark = SparkContext.getOrCreate()
 
 df = spark.read.parquet("s3a://diego-bucket0/try0/test0/remote_exploded1_notsubsetted.parquet")
-df_providers = df.dropDuplicates(['npi','frst_nm','lst_nm','gndr','med_sch']).select('npi','frst_nm','lst_nm','gndr','med_sch').withColumn('npi',col('npi').cast(LongType()))
+df_providers = df.dropDuplicates(['npi','frst_nm','lst_nm','gndr','med_sch'])\
+	.select('npi','frst_nm','lst_nm','gndr','med_sch')\
+	.withColumn('npi',col('npi').cast(LongType()))
+
+
+df_hospitals = df.dropDuplicates(['npi','frst_nm','lst_nm','gndr','med_sch'])\
+	.select('npi','frst_nm','lst_nm','gndr','med_sch')\
+	.withColumn('npi',col('npi').cast(LongType()))
 
 
 
