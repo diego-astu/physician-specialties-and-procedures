@@ -1,6 +1,7 @@
-## This script contains helper functions, mostly custom methods for Spark DFs
-## Only one of these will be used in production (standardize_all_columns)
-## The others were quality checks implemented during pipeline processing
+"""This script contains helper functions, mostly custom methods for Spark DFs
+Only one of these will be used in production (standardize_all_columns)
+The others were quality checks implemented during pipeline processing
+"""
 from pyspark.sql import DataFrame
 
 ## Create a custom class that inherits from Spark DataFrame
@@ -50,7 +51,7 @@ class DiegoDF(DataFrame):
                 print("Printing duplicate cases, descending order...")
                 print(count_by_key.filter('count>1').sort(desc("count")).show(20))
     
-    def standarize_all_columns(self):
+    def StandardizeAllColumns(self):
         """
         Column names often have spaces and capitalization
         Replace spaces with underscore, convert all to lowercase
@@ -60,7 +61,7 @@ class DiegoDF(DataFrame):
             std_data = std_data.withColumnRenamed(c,c.replace(" ", "_").lower())
         return(std_data)
     #
-    def count_missings(self,sort=False):
+    def CountMissings(self,sort=False):
         """
         Counts number of nulls and nans in each column
         """
@@ -87,7 +88,7 @@ class DiegoDF(DataFrame):
             (countDistinct(col(c)).alias(c) for c in varlist_uv)
             )\
             .withColumn('summary',lit('count_distinct'))
-        missings_cnt = count_missings(intab.select(*varlist_uv))\
+        missings_cnt = CountMissings(intab.select(*varlist_uv))\
             .withColumn('summary',lit('missing_cnt'))
         out_summary = default_describe.\
             unionByName(cnt_distincts)\

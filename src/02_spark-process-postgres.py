@@ -1,11 +1,4 @@
-<<<<<<< Updated upstream
-from pyspark import SparkContext
-from pyspark.sql import SQLContext
-from pyspark import SparkConf
-from pyspark.sql import SparkSession
-=======
-<<<<<<< Updated upstream
-=======
+
 """
 This script reads in simulated medical events,
 Merges it with physician quality data
@@ -23,60 +16,16 @@ import os
 from psycopg2 import connect, extensions, sql
 
 import pyspark
->>>>>>> Stashed changes
 from pyspark import SparkContext
 from pyspark import SparkConf
 from pyspark.sql import SparkSession
 from pyspark.sql import SQLContext
-
->>>>>>> Stashed changes
 
 from pyspark.sql.functions import *
 from pyspark.sql.functions import col
 from pyspark.sql.types import *
 from pyspark.sql.types import LongType
 
-<<<<<<< Updated upstream
-=======
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-import pyspark.sql.functions as f
-import re
-from pyspark.sql.functions import broadcast
-
-import pandas
-
-# add a description here about what this is doing
-sc = SparkContext(conf=SparkConf())
-spark = SparkSession.builder.getOrCreate()
-
-
-df = spark.read.parquet("s3a://diego-bucket0/try0/test0/remote_exploded1_notsubsetted.parquet")
-df_providers = df.dropDuplicates(['npi','frst_nm','lst_nm','gndr','med_sch'])\
-	.select('npi','frst_nm','lst_nm','gndr','med_sch')\
-	.withColumn('npi',col('npi').cast(LongType()))
-
-
-df_hospitals = df.dropDuplicates(['npi','frst_nm','lst_nm','gndr','med_sch'])\
-	.select('npi','frst_nm','lst_nm','gndr','med_sch')\
-	.withColumn('npi',col('npi').cast(LongType()))
-
-
-
-
-df_providers.write.format("jdbc") \
-    .option("url", "jdbc:postgresql://ec2-52-21-106-54.compute-1.amazonaws.com/diego_db") \
-    .option("dbtable", "mvp_schema.physicians") \
-    .option("user", "postgres") \
-    .option("password", "") \
-    .option("driver","org.postgresql.Driver") \
-    .mode("append").save()
-
-
-    #spark-submit --packages org.postgresql:postgresql:42.2.9 --jars /usr/local/spark/jars/postgresql-42.2.9.jar tp.py
-<<<<<<< Updated upstream
-=======
-=======
 import pyspark.sql.functions as F
 from pyspark.sql.functions import broadcast
 
@@ -99,7 +48,7 @@ def ReadInExtraDataCleanMerge():
     qual_key_list = ['npi']
     #Convert columns to lowercase and whitespace to underscore
     df_qual0 = DiegoDF(spark.read.csv(s3_path_physician_quality, header=True))\
-        .standarize_all_columns()
+        .StandardizeAllColumns()
 
     ##################################################
     # Clean Physician quality info                   #
@@ -195,7 +144,3 @@ if __name__ == '__main__':
         Table = "summary",
         PG_USER = os.environ["POSTGRES_USER"],
         PG_PW = os.environ["POSTGRES_PASSWORD"])
-
-
->>>>>>> Stashed changes
->>>>>>> Stashed changes
