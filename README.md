@@ -77,8 +77,14 @@ src/02_spark-process-postgres.py &
 	
 ~~~~
 
-The frontend can be deployed via command line. If your python binary is not in /usr/bin, you must replace python with the output from `$which python`
+The frontend can be deployed via command line. 
+
 `screen sudo python frontend/flask_app.py`
+
+If your python binary is not in /usr/bin, you must replace python with the output from `$which python3`
+
+
+
 
 
 # Dashboard
