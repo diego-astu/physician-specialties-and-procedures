@@ -33,7 +33,7 @@ import re
 import s3fs
 import time
 
-from SparkMethods_Diego import DiegoDF, duplicate_function
+import SparkMethods_Diego
 
 def ReadInExtraDataCleanMerge():
     """
