@@ -1,3 +1,14 @@
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+=======
+"""
+This script takes in seed data from CMS (stored in S3)
+Performs clean, merge, explode
+Outputs to Parquet
+"""
+
+>>>>>>> Stashed changes
 >>>>>>> Stashed changes
 import pyspark
 from pyspark import SparkContext
