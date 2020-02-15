@@ -7,7 +7,7 @@ A dashboard that diplays, for a given state, zip code, or medical practice, coun
 
 # Pipeline
 
- ![Pipeline](https://github.com/diego-astu/physician-specialties-and-procedures/blob/master/images/pipeline_overview.png)
+ ![Pipeline](https://github.com/diego-astu/physician-specialties-and-procedures/blob/master/images/pipeline__overview.png)
 
 # Requirements
 
