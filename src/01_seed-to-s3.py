@@ -30,7 +30,7 @@ import time
 
 from psycopg2 import connect, extensions, sql
 
-import SparkMethods_Diego
+from SparkMethods_Diego import DiegoDF
 
 
 def ProviderData_ReadAndClean():

@@ -33,7 +33,7 @@ import re
 import s3fs
 import time
 
-import SparkMethods_Diego
+from SparkMethods_Diego import DiegoDF
 
 def ReadInExtraDataCleanMerge():
     """
@@ -74,20 +74,27 @@ def CalculateProcedureCounts(df_in):
     df_out = spark.sql("""
 
 
-    SELECT npi,group_practice_pac_id,hcpcs_code, -- Primary Key
+    SELECT 
+    -- Primary Key
+    cast(npi as bigint) as npi,
+    cast(group_practice_pac_id as bigint) as group_practice_pac_id, 
+    cast(hcpcs_code as bigint) as hcpcs_code, 
 
     -- Physician level auxiliary attributes that could be normalized
-    medical_school_name, graduation_year, primary_specialty, 
+    medical_school_name, cast(graduation_year as int) as graduation_year, primary_specialty, 
     secondary_specialty_1, secondary_specialty_2, secondary_specialty_3, secondary_specialty_4, all_secondary_specialties, 
     --final_mips_score
-    hospital_affiliation_ccn_1, hospital_affiliation_ccn_2, 
-    hospital_affiliation_ccn_3, hospital_affiliation_ccn_4, hospital_affiliation_ccn_5,
+    cast(hospital_affiliation_ccn_1 as bigint) as hospital_affiliation_ccn_1,
+    cast(hospital_affiliation_ccn_2 as bigint) as hospital_affiliation_ccn_2,
+    cast(hospital_affiliation_ccn_3 as bigint) as hospital_affiliation_ccn_3,
+    cast(hospital_affiliation_ccn_4 as bigint) as hospital_affiliation_ccn_4,
+    cast(hospital_affiliation_ccn_5 as bigint) as hospital_affiliation_ccn_5,
 
     hospital_affiliation_lbn_1, hospital_affiliation_lbn_2, 
     hospital_affiliation_lbn_3, hospital_affiliation_lbn_4, hospital_affiliation_lbn_5,
 
     -- Practice level auxiliary attributes that could be normalized
-    private_practice_name, number_of_group_practice_members, line_1_street_address, line_2_street_address, city, state, substr(zip_code,1,5) as zip_code, phone_number, 
+    private_practice_name, cast(number_of_group_practice_members as int) as number_of_group_practice_members, line_1_street_address, line_2_street_address, city, state, substr(zip_code,1,5) as zip_code, phone_number, 
 
     --Procedure level attributes that could be normalized
     hcpcs_description, hcpcs_drug_indicator, 
@@ -110,10 +117,13 @@ def WriteToPostgres(spark_df,
     PostgresIP, 
     DB_name,
     Namespace,
+    Partition_by,
     Table,
     PG_USER = os.environ["POSTGRES_USER"],
     PG_PW = os.environ["POSTGRES_PASSWORD"]):
-    spark_df.write.format("jdbc") \
+    spark_df.write\
+        .partitionBy(Partition_by)\
+        .format("jdbc") \
         .option("url", "jdbc:postgresql://"+PostgresIP+":5432/"+DB_name) \
         .option("dbtable", Namespace+"."+Table) \
         .option("user", PG_USER) \
@@ -137,10 +147,27 @@ if __name__ == '__main__':
 
     DF_forPostgres = CalculateProcedureCounts(exploded_data_with_quality).persist()
 
-    WriteToPostgres(spark_df = DF_forPostgres, 
+
+    out_to_parquet = 's3a://dphys-data/'+ 'seed-data/exploded-data/' + 'to_PSQL' 
+    DF_forPostgres\
+        .write\
+        .parquet(out_to_parquet, 
+            compression='snappy', 
+            mode='overwrite')
+
+
+    
+
+
+
+
+    WriteToPostgres(spark_df = spark.read.parquet(out_to_parquet), 
         PostgresIP = os.environ["POSTGRES_IP"],
         DB_name = "test_db",
         Namespace = "denorm_schema",
+        Partition_by = ('state','zip_code','private_practice_name'),
         Table = "summary",
         PG_USER = os.environ["POSTGRES_USER"],
         PG_PW = os.environ["POSTGRES_PASSWORD"])
+
+
